@@ -110,6 +110,7 @@ export interface MandelbrotJobBase {
   id: string;
   batchId: string;
   // jobが実際に走るタイミングで設定される
+  // This is set when the job actually runs.
   workerIdx?: number;
   requiredJobIds: string[];
 }
@@ -169,7 +170,7 @@ export type JobType = "calc-iteration" | "calc-ref-orbit";
 export type RefOrbitCache = {
   x: BigNumber;
   y: BigNumber;
-  r: BigNumber; // 縮小時は100%再利用して良いのでその判断のために必要
+  r: BigNumber; // 縮小時は100%再利用して良いのでその判断のために必要 When shrinking, 100% of the data can be reused, so this is necessary to make that decision.
   N: number;
   xn: XnBuffer;
   blaTable: BLATableBuffer;

@@ -61,6 +61,7 @@ const getLatestBatchContext = () => {
 
 /**
  * BatchContextを取得する
+ * Get the BatchContext
  */
 export const getBatchContext = (batchId: string) =>
   batchContextMap.get(batchId);
@@ -71,6 +72,7 @@ export const clearBatchContext = () => {
 
 /**
  * Footerで表示するための進捗情報をbatchContextから取得する
+ * Get the progress information to be displayed in the footer from the batchContext
  */
 export const getProgressData = (): string | ResultSpans => {
   const batchContext = getLatestBatchContext();
@@ -131,6 +133,7 @@ export function registerBatch(
   let refY = batchContext.mandelbrotParams.y.toString();
 
   // 再利用フラグが立っているなら問答無用でcacheを使い、そうでない場合は使える場合のみ使う
+  // If the reuse flag is set, use the cache without question, otherwise use it only if it can be used
   const refOrbitCache = batchContext.shouldReuseRefOrbit
     ? getRefOrbitCache()
     : getRefOrbitCacheIfAvailable(batchContext.mandelbrotParams);
@@ -146,6 +149,7 @@ export function registerBatch(
     markDoneJob(refOrbitJobId);
   } else if (batchContext.mandelbrotParams.mode === "normal") {
     // normalモードの場合はreference orbitの計算は不要
+    // Reference orbit calculation is not required in normal mode
     markDoneJob(refOrbitJobId);
   } else {
     addJob({
@@ -190,16 +194,19 @@ export function tickWorkerPool() {
     findFreeWorkerIndex("calc-iteration") === -1
   ) {
     // まだ準備ができていないworkerがいる場合は待つ
+    // Wait if there are workers that are not yet ready
     setTimeout(tickWorkerPool, 100);
     return;
   }
 
   // reference orbit jobがある場合はpoolに空きがある限り処理を開始する
+  // Start processing as long as there is space in the pool if there is a reference orbit job
   while (canQueueJob("calc-ref-orbit", refPool)) {
     const job = popWaitingExecutableJob("calc-ref-orbit")!;
     const workerIdx = findFreeWorkerIndex("calc-ref-orbit");
 
     // 空いているworkerが見つからなかったのでqueueに戻す
+    // If no free worker is found, return to the queue
     if (!refPool[workerIdx]) {
       console.error("All workers are currently busy: ", {
         refPoolLength: refPool.length,
@@ -216,6 +223,7 @@ export function tickWorkerPool() {
   }
 
   // requiresが空のもの、もしくはrequiresがdoneJobIdsと一致しているものを処理する
+  // Process those with empty requires or those that match doneJobIds
   const iterPool = getWorkerPool("calc-iteration");
 
   while (canQueueJob("calc-iteration", iterPool)) {
@@ -223,6 +231,7 @@ export function tickWorkerPool() {
     const workerIdx = findFreeWorkerIndex("calc-iteration");
 
     // 空いているworkerが見つからなかったのでqueueに戻す
+    // If no free worker is found, return to the queue
     if (!iterPool[workerIdx]) {
       console.error("All workers are currently busy: ", {
         iterPoolLength: iterPool.length,
@@ -249,6 +258,7 @@ export function tickWorkerPool() {
 
 /**
  * 指定したworkerを使ってjobを開始する
+ * Start a job using the specified worker
  */
 function start(workerIdx: number, job: MandelbrotJob) {
   const batchContext = batchContextMap.get(job.batchId)!;
@@ -269,11 +279,13 @@ export function startBatch(batchId: BatchId) {
 
 /**
  * 指定したバッチIDのジョブをキャンセルする
+ * Cancel the job with the specified batch ID
  */
 export function cancelBatch(batchId: string) {
   acceptingBatchIds.delete(batchId);
 
   // 待ちリストからは単純に削除
+  // Simply remove from the waiting list
   removeBatchFromWaitingJobs(batchId);
 
   const runningJobsInBatch = getRunningJobsInBatch(batchId);

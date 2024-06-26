@@ -24,6 +24,7 @@ export const updateStore = (key: string, value: any) => {
   store[key] = value;
 
   // FIXME: 無関係の更新時もここでチェックが入るのはどうなのかという気もする
+  // FIXME: I wonder if it's okay to check here even when updating something unrelated.
   if (isSettingField(key)) {
     writeSettingsToStorage();
   }

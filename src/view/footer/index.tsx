@@ -113,6 +113,7 @@ const BarContent = (props: {
   React.useEffect(() => {
     if (ref.current && ref.current.offsetWidth < ref.current.scrollWidth) {
       // 実際の幅がコンテナの幅より大きい場合は、`elapsed` のみを表示
+      // If the actual width is greater than the container width, only show `elapsed`
       setDisplayText(`${elapsed}ms`);
     }
   }, [name, elapsed]);

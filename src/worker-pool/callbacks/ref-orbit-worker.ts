@@ -10,7 +10,9 @@ import { removeWorkerReference } from "../worker-reference";
 
 export const onRefOrbitWorkerTerminated: RefOrbitTerminatedCallback = (job) => {
   // ここで何をする予定だったんだっけ...
+  // What was I going to do here...
   // terminateされているということは外部からcancelされており、後始末はそっちで行われるはず
+  // Being terminated means that it has been canceled from the outside, and the cleanup should be done there
 };
 
 export const onRefOrbitWorkerProgress: RefOrbitProgressCallback = (
@@ -20,6 +22,7 @@ export const onRefOrbitWorkerProgress: RefOrbitProgressCallback = (
   const batchContext = getBatchContext(job.batchId);
 
   // 停止が間に合わなかったケースや既にcancelされているケース。何もしない
+  // Cases where the stop was not in time or already canceled. Do nothing
   if (batchContext == null) {
     return;
   }
@@ -32,6 +35,7 @@ export const onRefOrbitWorkerResult: RefOrbitResultCallback = (result, job) => {
   const batchContext = getBatchContext(job.batchId);
 
   // 停止が間に合わなかったケースや既にcancelされているケース。何もしない
+  // Cases where the stop was not in time or already canceled. Do nothing
   if (batchContext == null) {
     return;
   }
@@ -46,6 +50,7 @@ export const onRefOrbitWorkerResult: RefOrbitResultCallback = (result, job) => {
   });
 
   // cacheに登録
+  // Register in cache
   setRefOrbitCache({
     x: batchContext.mandelbrotParams.x,
     y: batchContext.mandelbrotParams.y,

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 
-/** pixel単位の矩形 */
+/** pixel単位の矩形 Rectangle in pixels */
 export interface Rect {
   x: number;
   y: number;
@@ -8,7 +8,7 @@ export interface Rect {
   height: number;
 }
 
-/** 複素数平面座標の矩形 */
+/** 複素数平面座標の矩形 Rectangle in complex plane coordinates */
 export type RealRect = {
   topLeftX: BigNumber;
   topLeftY: BigNumber;
@@ -90,10 +90,12 @@ export const divideRect = (
       1,
     );
     // 各エリアの分割数は1もしくは偶数にする
+    // The number of divisions for each area should be 1 or an even number.
     return count % 2 === 0 || count === 1 ? count : count + 1;
   });
 
   // 合計がexpectedDivideCountを下回るように大きいやつから引いていく
+  // Subtract the largest one so that the total is less than expectedDivideCount
   while (expectedDivideCount < divideCounts.reduce((a, b) => a + b)) {
     const max = Math.max(...divideCounts);
     const idx = divideCounts.findIndex((v) => v === max);

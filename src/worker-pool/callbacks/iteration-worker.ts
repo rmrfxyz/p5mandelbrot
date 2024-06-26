@@ -17,6 +17,7 @@ export const onIterationWorkerProgress: IterationProgressCallback = (
   const batchContext = getBatchContext(job.batchId);
 
   // 停止が間に合わなかったケースや既にcancelされているケース。何もしない
+  // Cases where the stop was not in time or already canceled. Do nothing
   if (batchContext == null) {
     return;
   }
@@ -33,6 +34,7 @@ export const onIterationWorkerResult: IterationResultCallback = (
   const batchContext = getBatchContext(job.batchId);
 
   // 停止が間に合わなかったケースや既にcancelされているケース。何もしない
+  // Cases where the stop was not in time or already canceled. Do nothing
   if (batchContext == null) {
     return;
   }
@@ -44,6 +46,7 @@ export const onIterationWorkerResult: IterationResultCallback = (
   });
 
   // jobを完了させる
+  // Complete the job
   batchContext.progressMap.set(job.id, 1.0);
 
   completeJob(job);
@@ -57,6 +60,7 @@ export const onIterationWorkerResult: IterationResultCallback = (
   renderToResultBuffer(rect);
 
   // バッチ全体が完了していたらonComplete callbackを呼ぶ
+  // If the entire batch is complete, call the onComplete callback
   if (isBatchCompleted(job.batchId)) {
     const finishedAt = performance.now();
     batchContext.finishedAt = finishedAt;
@@ -74,6 +78,7 @@ export const onIterationWorkerIntermediateResult = (
   const { rect } = job;
 
   // 停止が間に合わなかったケース。何もしない
+  // Cases where the stop was not in time. Do nothing
   if (getBatchContext(job.batchId) == null) {
     return;
   }

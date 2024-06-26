@@ -6,8 +6,13 @@ import { IterationBuffer, Resolution } from "./types";
 // それならrがどうであれ使い回せるはず
 // 一方でちゃんとピクセル座標と誤差なく対応させられるかわからない
 // BigNumberだし比較重いかも
+// FIXME: Maybe IterationBuffer should have a cache for complex plane coordinates
+// In that case, it should be possible to reuse it regardless of r
+// On the other hand, I don't know if it can properly correspond to pixel coordinates without error
+// It's a BigNumber, so it might be comparatively heavy
 
 // FIXME: もっと賢くデータを持つ
+// FIXME: Be smarter with your data
 let iterationCache: IterationBuffer[] = [];
 
 export const upsertIterationCache = (
@@ -26,6 +31,7 @@ export const upsertIterationCache = (
       resolution.width * resolution.height
     ) {
       // 解像度が大きい方を採用
+      // Use the larger resolution
       iterationCache[idx] = { rect, buffer, resolution };
     }
   } else {
@@ -43,7 +49,8 @@ export const clearIterationCache = (): void => {
 
 /**
  * マウスXY座標の位置のiteration回数を取得する
- */
+ * Get the number of iterations for the mouse XY coordinate position
+*/
 export const getIterationTimeAt = (worldX: number, worldY: number) => {
   for (const iteration of iterationCache) {
     if (

@@ -161,11 +161,13 @@ export function dividerSequence(n: number) {
     result.push(i);
   }
   // 最初の2要素は荒すぎるので落とす
+  // Drop the first two elements because they are too rough
   return result.slice(2);
 }
 
 /**
  * できるだけ等間隔に要素を取りつつ指定した長さに縮める
+ * Take elements as evenly spaced as possible and shrink them to the specified length
  */
 export function thin<T>(arr: T[], length: number): T[] {
   if (length >= arr.length || length < 3) {

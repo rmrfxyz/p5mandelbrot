@@ -114,6 +114,7 @@ export class BasePalette implements Palette {
   getColorIndex(index: number) {
     if (this.mirrored) {
       // 折り返す
+      // Wrap
       const length = this.colorLength * 2;
       const offsettedIndex = (index + this.offsetIndex) % length;
 
@@ -124,6 +125,7 @@ export class BasePalette implements Palette {
       }
     } else {
       // そのまま
+      // As is
       const offsettedIndex = (index + this.offsetIndex) % this.colorLength;
       return offsettedIndex;
     }

@@ -255,13 +255,13 @@ const sketch = (p: p5) => {
       if (event.key === "8") setColorIndex(7);
       if (event.key === "0") resetIterationCount();
       if (event.key === "9") setDeepIterationCount();
-      if (event.key === "r") resetRadius();
-      if (event.key === "m") cycleMode();
+      if (event.key === "R") resetRadius();
+      if (event.key === "M") cycleMode();
       if (event.key === "ArrowDown") zoom(rate);
-      if (event.key === "s") zoom(rate);
-      if (event.key === "p") togglePinReference();
+      if (event.key === "S") zoom(rate);
+      if (event.key === "P") togglePinReference();
       if (event.key === "ArrowUp") zoom(1.0 / rate);
-      if (event.key === "w") zoom(1.0 / rate);
+      if (event.key === "W") zoom(1.0 / rate);
       if (event.key === "ArrowRight") setCurrentParams({ N: params.N + diff });
       if (event.key === "ArrowLeft") setCurrentParams({ N: params.N - diff });
 

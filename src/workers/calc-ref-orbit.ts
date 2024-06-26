@@ -66,6 +66,7 @@ function calcRefOrbit(
   }
 
   // 中断された
+  // Aborted
   if (terminateChecker[workerIdx] !== 0) {
     return { xn: [] };
   }
@@ -73,6 +74,7 @@ function calcRefOrbit(
   const xn: Complex[] = [];
 
   // FIXME: 後ほどFloat64Arrayのまま返すように変更する
+  // FIXME: Change to return as Float64Array later
   for (let i = 0; i < n; i++) {
     xn.push({ re: xnn[i * 2], im: xnn[i * 2 + 1] });
   }
@@ -82,6 +84,7 @@ function calcRefOrbit(
 
 /**
  * 計算済みのReference OrbitからBLAの係数を計算する
+ * Calculate BLA coefficients from the calculated Reference Orbit
  */
 function calcBLACoefficient(ref: Complex[], pixelSpacing: number) {
   // Reference: https://mathr.co.uk/tmp/mandelbla.pdf
@@ -160,6 +163,7 @@ async function setup() {
     const terminateChecker = new Uint8Array(terminator);
 
     // 適当に中央のピクセルを参照点とする
+    // Use the center pixel as the reference point
     const refPixelX = Math.floor(pixelWidth / 2);
     const refPixelY = Math.floor(pixelHeight / 2);
 

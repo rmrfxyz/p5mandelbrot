@@ -33,7 +33,9 @@ export const resetWorkerPool = (jobType: JobType) => pool.set(jobType, []);
 /**
  * workerの数を返す
  * jobTypeが指定されていない場合は全workerが対象
- */
+ * Returns the number of workers
+ * If jobType is not specified, all workers are targeted
+*/
 export const getWorkerCount = (jobType?: JobType) =>
   jobType == null
     ? [...pool.values()].reduce((acc, workers) => acc + workers.length, 0)
@@ -41,6 +43,7 @@ export const getWorkerCount = (jobType?: JobType) =>
 
 /**
  * 全workerに対して処理を行う
+ * Perform processing on all workers
  */
 export const iterateAllWorker = <T>(f: (worker: MandelbrotFacadeLike) => T) => {
   for (const workers of pool.values()) {
@@ -50,6 +53,7 @@ export const iterateAllWorker = <T>(f: (worker: MandelbrotFacadeLike) => T) => {
 
 /**
  * 全workerをリセットする
+  * Reset all workers
  */
 export const resetAllWorker = () => {
   [...pool.keys()].forEach(resetWorkerPool);
@@ -57,6 +61,7 @@ export const resetAllWorker = () => {
 
 /**
  * 空いてるworkerがあればそのindexを返す
+ * Returns the index of the worker if there is a free worker
  */
 export function findFreeWorkerIndex(jobType: JobType) {
   return getWorkerPool(jobType).findIndex(
@@ -66,13 +71,16 @@ export function findFreeWorkerIndex(jobType: JobType) {
 
 /**
  * terminate判定用のworker indexを返す
+ * Returns the worker index for the terminate judgment
  * 返り値は0 ~ 各workerの合計数 - 1の範囲になる
+ * The return value will be in the range of 0 to the total number of each worker
  */
 export const calcNormalizedWorkerIndex = (
   jobType: JobType,
   workerIdx: number,
 ) => {
   // FIXME: jobTypeが増えたときに対応できていない
+  // FIXME: Not compatible with the increase in jobType
   if (jobType === "calc-ref-orbit") {
     const pool = getWorkerPool("calc-iteration");
     return pool.length + workerIdx;
@@ -83,7 +91,9 @@ export const calcNormalizedWorkerIndex = (
 
 /**
  * WorkerPoolを再構築する
+ * Rebuild WorkerPool
  * countやworkerTypeが変わった場合に呼ばれる
+ * Called when count or workerType changes
  */
 export function prepareWorkerPool(
   count: number = getStore("workerCount"),
@@ -99,11 +109,12 @@ export function prepareWorkerPool(
   resetWorkers();
 
   fillIterationWorkerPool(count, workerType);
-  fillRefOrbitWorkerPool(1 /* 仮 */, workerType);
+  fillRefOrbitWorkerPool(1 /* 仮 tentative */, workerType);
 }
 
 /**
  * WorkerPoolを溜まっていたJobごと全部リセットする
+ * Reset all jobs that have accumulated in the WorkerPool
  */
 export function resetWorkers() {
   iterateAllWorker((workerFacade) => {
@@ -119,6 +130,7 @@ export function resetWorkers() {
 
 /**
  * 指定した数になるまでWorkerPoolを埋める
+ * Fill the WorkerPool until the specified number is reached
  */
 function fillIterationWorkerPool(
   upTo: number = getStore("workerCount"),

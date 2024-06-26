@@ -157,6 +157,8 @@ const sketch = (p: p5) => {
 
     // canvas内でクリックして、canvas内で離した場合のみクリック時の処理を行う
     // これで外からcanvas内に流れてきた場合の誤クリックを防げる
+    // Click processing is performed only when you click inside the canvas and release it inside the canvas.
+    // This prevents accidental clicks when something comes into the canvas from outside.
 
     if (mouseClickStartedInside) {
       if (getStore("canvasLocked")) return;
@@ -165,6 +167,7 @@ const sketch = (p: p5) => {
 
       if (mouseDragged) {
         // ドラッグ終了時
+        // When dragging ends
         const { pixelDiffX, pixelDiffY } = getDraggingPixelDiff(p);
         setOffsetParams({ x: -pixelDiffX, y: -pixelDiffY });
         mouseReleasedOn = { mouseX: pixelDiffX, mouseY: pixelDiffY };
@@ -184,6 +187,7 @@ const sketch = (p: p5) => {
         mouseDraggedComplete = true;
       } else {
         // クリック時
+        // On click
         const { mouseX, mouseY } = calcVars(
           p.mouseX,
           p.mouseY,
@@ -195,6 +199,7 @@ const sketch = (p: p5) => {
 
         const rate = getStore("zoomRate");
         // shiftキーを押しながらクリックすると縮小
+        // Shift-click to zoom out
         if (ev.shiftKey) {
           zoom(rate);
         } else {
@@ -213,6 +218,7 @@ const sketch = (p: p5) => {
     if (getStore("canvasLocked")) return;
 
     // canvas内ではスクロールしないようにする
+    // Prevent scrolling within the canvas
     event.preventDefault();
 
     if (event) {
@@ -255,13 +261,13 @@ const sketch = (p: p5) => {
       if (event.key === "8") setColorIndex(7);
       if (event.key === "0") resetIterationCount();
       if (event.key === "9") setDeepIterationCount();
-      if (event.key === "r") resetRadius();
-      if (event.key === "m") cycleMode();
+      if (event.key === "R") resetRadius();
+      if (event.key === "M") cycleMode();
       if (event.key === "ArrowDown") zoom(rate);
-      if (event.key === "s") zoom(rate);
-      if (event.key === "p") togglePinReference();
+      if (event.key === "S") zoom(rate);
+      if (event.key === "P") togglePinReference();
       if (event.key === "ArrowUp") zoom(1.0 / rate);
-      if (event.key === "w") zoom(1.0 / rate);
+      if (event.key === "W") zoom(1.0 / rate);
       if (event.key === "ArrowRight") setCurrentParams({ N: params.N + diff });
       if (event.key === "ArrowLeft") setCurrentParams({ N: params.N - diff });
 
@@ -339,6 +345,7 @@ const entrypoint = () => {
   });
 
   // localStorageから復帰
+  //Return from localStorage
   const hydratedPOIList = readPOIListFromStorage();
   updateStore("poi", hydratedPOIList);
 
@@ -351,12 +358,14 @@ const entrypoint = () => {
   updateStore("zoomRate", hydratedSettings.zoomRate);
 
   // hydrateしたworkerCountの値でworkerを初期化する
+  // Initialize the worker with the hydrated workerCount value.
   prepareWorkerPool(getStore("workerCount"), getStore("mode"));
 
   const p5root = document.getElementById("p5root");
   new p5(sketch, p5root!);
 
   // Canvas以外の要素
+  // Elements other than Canvas
   const container = document.getElementById("app-root")!;
   ReactDOMClient.createRoot(container).render(
     <React.StrictMode>

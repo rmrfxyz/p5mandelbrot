@@ -21,6 +21,7 @@ export const fillColor = (
         4 * ((y * density + j) * canvasWidth * density + (x * density + i));
 
       // iterationが-1のときはglitchが起きているので白で塗りつぶす
+      // When iteration is -1, a glitch occurs, so fill it with white.
       if (iteration === GLITCHED_POINT_ITERATION) {
         pixels[pixelIndex + 0] = 255;
         pixels[pixelIndex + 1] = 255;
@@ -79,6 +80,7 @@ export const renderIterationsToPixel = (
     const { rect, buffer, resolution } = iteration;
 
     // worldRectとiterationのrectが一致する箇所だけ描画する
+    // Draw only where the worldRect and iteration's rect match
     const startY = Math.max(rect.y, worldRect.y);
     const startX = Math.max(rect.x, worldRect.x);
     const endY = Math.min(rect.y + rect.height, worldRect.y + worldRect.height);
@@ -87,6 +89,7 @@ export const renderIterationsToPixel = (
     for (let worldY = startY; worldY < endY; worldY++) {
       for (let worldX = startX; worldX < endX; worldX++) {
         // バッファ内で対応する点のiterationを取得
+        // Get the iteration of the corresponding point in the buffer
 
         const idx = bufferLocalLogicalIndex(worldX, worldY, rect, resolution);
         const n = buffer[idx];
@@ -116,7 +119,7 @@ export const drawCrossHair = (p: p5) => {
   const centerY = Math.floor(p.height / 2);
 
   // FIXME: たぶんカラーパレットを見て目立つ色を選ぶべき
-
+  // FIXME: Maybe you should look at the color palette and choose a color that stands out
   p.stroke(p.color(0, 0, 100));
   p.line(centerX - length, centerY, centerX + length, centerY);
   p.line(centerX, centerY - length, centerX, centerY + length);

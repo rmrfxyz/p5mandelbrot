@@ -176,8 +176,12 @@ export const startCalculation = async (onComplete: () => void) => {
     // FIXME: 拡大待ち中や移動が終わる前に再度移動すると表示が壊れる
     // 拡大開始したときに既にCacheが消えてるからそりゃそうだ
     // なんとかせい
+    // FIXME: If you move again while waiting to zoom in or before the movement is finished, the display will break.
+    // That's because the cache has already disappeared when you start zooming in.
+    // Do something about it.
 
     // 移動した分の再描画範囲を計算
+    // Calculate the redraw range for the amount moved
     const iterationBufferTransferedRect = {
       x: offsetX >= 0 ? 0 : Math.abs(offsetX),
       y: offsetY >= 0 ? 0 : Math.abs(offsetY),
@@ -186,6 +190,7 @@ export const startCalculation = async (onComplete: () => void) => {
     } satisfies Rect;
 
     // FIXME: キャッシュ側を毎回書き換えるのはどう考えても悪手
+    // Rewriting the cache every time is a bad idea no matter how you look at it
     translateRectInIterationCache(offsetX, offsetY);
 
     // 新しく計算しない部分を先に描画しておく
@@ -194,7 +199,8 @@ export const startCalculation = async (onComplete: () => void) => {
     // TODO:
     // perturbation時はreference orbitの値を取っておけば移動がかなり高速化できる気がする
     // ただしどのくらいの距離まで有効なのか、有効でなくなったことをどう検知したらいいのかわからん
-
+    // I think that if you keep the reference orbit value during perturbation, you can move much faster.
+    // However, I don't know how far it is effective, or how to detect when it is no longer effective.
     const expectedDivideCount = Math.max(divideRectCount, 2);
     calculationRects = divideRect(
       getOffsetRects(),
@@ -203,6 +209,7 @@ export const startCalculation = async (onComplete: () => void) => {
     );
   } else {
     // 移動していない場合は再利用するCacheがないので消す
+    // If it has not been moved, there is no cache to reuse, so delete it.
     clearIterationCache();
   }
 
@@ -235,6 +242,7 @@ const getOffsetRects = (): Rect[] => {
 
   if (offsetY !== 0) {
     // (1) 上下の横長矩形（offsetYが0なら存在しない）
+    // (1) Top and bottom horizontal rectangle (does not exist if offsetY is 0)
     rects.push({
       x: 0,
       y: offsetY > 0 ? height - offsetY : 0,
@@ -244,6 +252,7 @@ const getOffsetRects = (): Rect[] => {
   }
   if (offsetX !== 0) {
     // (2) 1に含まれる分を除いた左右の縦長矩形（offsetXが0なら存在しない）
+    // (2) The left and right vertical rectangles excluding the part included in 1 (if offsetX is 0, it does not exist)
     rects.push({
       x: offsetX > 0 ? width - offsetX : 0,
       y: offsetY > 0 ? 0 : Math.abs(offsetY),

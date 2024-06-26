@@ -13,10 +13,12 @@ export const extractMandelbrotParams = () => {
 
   if (x === null || y === null || r === null) {
     // modeはなければnormal、Nはなければ500
+    // If mode is not set, it is set to normal. If N is not set, it is set to 500.
     return null;
   }
 
   // 共有されたURLを読み込んだあとは消しておく
+  // Delete the shared URL after loading it
   history.replaceState({}, "", location.origin);
 
   try {

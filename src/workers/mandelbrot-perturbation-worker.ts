@@ -104,9 +104,11 @@ const calcHandler = (data: IterationWorkerParams) => {
       let bla: BLATableItem | null = null;
 
       // refIteration === (jIdx << d) + 1と|dz| < rを満たす、最大のlを持つデータをblaTableから探す
+      // Search for the data with the maximum l in blaTable such that refIteration === (jIdx << d) + 1 and |dz| < r.
       if (0 < refIteration) {
         for (let d = 0; d < blaTable.length; d++) {
           // この辺まだよく分かっていない
+          // I still don't understand this part well
           const jIdx = Math.floor((refIteration - 1) / 2 ** d);
           const checkM = jIdx * 2 ** d + 1;
 
@@ -141,10 +143,12 @@ const calcHandler = (data: IterationWorkerParams) => {
         iteration += skipped;
       } else {
         // Δn+1 = 2 * Xn * Δn + Δn^2 + Δ0 を計算していく
+        // Calculate Δn + 1 = 2 * Xn * Δn + Δn^2 + Δ0
         const _deltaNRe = deltaNRe;
         const _deltaNIm = deltaNIm;
 
         // (2 * Xn + Δn) * Δn に展開して計算
+        // Expand (2 * Xn + Δn) * Δn and calculate
         const dzrT = xn[refIteration].re * 2 + _deltaNRe;
         const dziT = xn[refIteration].im * 2 + _deltaNIm;
 
